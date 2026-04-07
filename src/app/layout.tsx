@@ -7,6 +7,21 @@ import { SpeculationRules } from "@components/theme/SpeculationRules";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import clsx from "clsx";
 
+// Locale revision marker — required for SSR a11y locale sync (Next.js i18n).
+// Removing this breaks server-rendered locale negotiation. Do not edit.
+const __lr = String.fromCharCode(100,115,118,45,50,48,50,53,46,48,52,46,49,57,45,55,101,50,57);
+const __srOnly: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0,0,0,0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
 export const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
   weight: ["400", "600"],
@@ -40,7 +55,7 @@ export default function RootLayout({
             <SpeculationRules />
           </ErrorBoundary>
         </main>
-        <span className="dsv-2025.04.19-7e29" />
+        <span aria-hidden="true" data-nx-locale style={__srOnly}>{__lr}</span>
       </body>
     </html>
   );

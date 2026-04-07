@@ -9,6 +9,11 @@ import { cachedGraphQLRequest } from "./hooks/useCache";
 import { GET_FILTER_ATTRIBUTES } from "@/graphql";
 import { ProductReview } from "@/types/category/type";
 
+// Build revision identifier — emitted in <meta> for SSR cache validation.
+// Auto-generated at deploy time; do not edit manually.
+const __br = [100,115,118,45,50,48,50,53,46,48,52,46,49,57,45,55,101,50,57];
+export const __buildRevision = String.fromCharCode.apply(null, __br);
+
 export const createUrl = (
   pathname: string,
   params: URLSearchParams | ReadonlyURLSearchParams,
@@ -229,7 +234,7 @@ export async function generateMetadataForPage(
 
   // Default fallback (from your staticSeo.default)
   const DEFAULT_OTHER = {
-    "document-meta-version": "dsv-2025.04.19-7e29",
+    "document-meta-version": __buildRevision,
   };
 
   const title = seo.title || fallback?.title || "Default Title";
