@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { fetchHandler } from "../fetch-handler";
 import { GUEST_CART_ID, GUEST_CART_TOKEN, IS_GUEST } from "@/utils/constants";
 import { encodeJWT, decodeJWT } from "@/utils/jwt-cookie";
@@ -12,9 +12,35 @@ import { setCookie, deleteCookie, getNativeCookie } from "../getCartToken";
 // Main Hook
 // ---------------------------
 export const useGuestCartToken = () => {
-  const [token, setToken] = useState<string | null>(null);
-  const [cartId, setCartId] = useState<number | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const getDecodedGuestSession = () => {
+    const cookieToken = getNativeCookie(GUEST_CART_TOKEN);
+
+    if (!cookieToken) {
+      return null;
+    }
+
+    const isGuest = getNativeCookie(IS_GUEST) !== "false";
+
+    return decodeJWT<{
+      sessionToken: string;
+      cartId: number;
+      isGuest: boolean;
+    }>(cookieToken, isGuest);
+  };
+
+  const [token, setToken] = useState<string | null>(() => {
+    const decoded = getDecodedGuestSession();
+
+    return decoded?.sessionToken ?? null;
+  });
+
+  const [cartId, setCartId] = useState<number | null>(() => {
+    const decoded = getDecodedGuestSession();
+
+    return decoded?.cartId ?? null;
+  });
+
+  const [isReady] = useState(true);
 
   const isResettingRef = useRef(false);
   const tokenCreatedRef = useRef(false);
@@ -93,26 +119,6 @@ export const useGuestCartToken = () => {
 
     isResettingRef.current = false;
   };
-
-  useEffect(() => {
-    const cookieToken = getNativeCookie(GUEST_CART_TOKEN);
-
-    if (cookieToken) {
-      const isGuest = getNativeCookie(IS_GUEST) !== "false";
-      const decoded = decodeJWT<{
-        sessionToken: string;
-        cartId: number;
-        isGuest: boolean;
-      }>(cookieToken, isGuest);
-
-      if (decoded) {
-        setToken(decoded.sessionToken);
-        setCartId(decoded.cartId);
-      }
-    }
-
-    setIsReady(true);
-  }, []);
 
   return {
     token,

@@ -4,7 +4,7 @@ import { SORT, SortOrderTypes } from "@/utils/constants";
 import { createUrl } from "@/utils/helper";
 import { Select, SelectItem } from "@heroui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -28,10 +28,6 @@ const SortOrder: FC<{
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [tempSort, setTempSort] = useState(sort);
-
-  useEffect(() => {
-    setTempSort(sort);
-  }, [sort]);
 
   const handleSortChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -105,7 +101,10 @@ const SortOrder: FC<{
           size="md"
           variant="flat"
           className="bg-neutral-100 dark:bg-neutral-800"
-          onPress={onOpen}
+          onPress={() => {
+            setTempSort(sort);
+            onOpen();
+          }}
         >
           <SortIcon />
           <span className="font-outfit text-base tracking-wide"> Sort</span>
