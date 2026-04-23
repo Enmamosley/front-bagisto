@@ -35,12 +35,44 @@ async function getCachedSession(): Promise<BagistoSession | null> {
   return session;
 }
 
+function resolveGraphqlUri(ssrMode: boolean): string {
+  const clientUri = "/api/graphql";
+
+  if (!ssrMode) {
+    return clientUri;
+  }
+
+  const configuredUri =
+    process.env.GRAPHQL_URL ||
+    process.env.BAGISTO_GRAPHQL_URL ||
+    process.env.NEXT_PUBLIC_GRAPHQL_URL ||
+    GRAPHQL_URL;
+
+  if (configuredUri && /^https?:\/\//i.test(configuredUri)) {
+    return configuredUri;
+  }
+
+  const serverBaseUrl =
+    process.env.NEXT_PUBLIC_NEXT_AUTH_URL ||
+    process.env.URL ||
+    process.env.DEPLOY_PRIME_URL ||
+    process.env.DEPLOY_URL ||
+    `http://localhost:${process.env.PORT || "3000"}`;
+
+  try {
+    return new URL(configuredUri || clientUri, serverBaseUrl).toString();
+  } catch {
+    return new URL(clientUri, `http://localhost:${process.env.PORT || "3000"}`).toString();
+  }
+}
+
 function createApolloClient() {
   const ssrMode = typeof window === "undefined";
   const cache = new InMemoryCache();
+  const uri = resolveGraphqlUri(ssrMode);
 
   const httpLink = new HttpLink({
-    uri: ssrMode ? GRAPHQL_URL : "/api/graphql",
+    uri,
     credentials: "include",
   });
 
