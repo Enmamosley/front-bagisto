@@ -1,0 +1,18 @@
+[build]
+command = "npm run build"
+publish = ".next"
+
+[build.environment]
+NEXT_PUBLIC_BAGISTO_ENDPOINT = "https://tienda.mosley.mx"
+GRAPHQL_URL = "https://tienda.mosley.mx/api/graphql"
+NEXT_PUBLIC_GRAPHQL_URL = "https://tienda.mosley.mx/api/graphql"
+NEXT_PUBLIC_NEXT_AUTH_SECRET = "CbQRmRcKRpIfvbLdMfn7yB+7u9GXRawLTeUjriLlvDY="
+BAGISTO_STOREFRONT_KEY = "pk_storefront_rqPRNz3eC3LNPEwiVNmwp33oZKcXf0ME"
+# Note: NEXT_PUBLIC_NEXT_AUTH_URL is automatically derived from DEPLOY_PRIME_URL during build
+# If you need a custom URL (e.g., custom domain), set it in Netlify UI:
+# Site settings > Build & deploy > Environment > Environment variables
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
